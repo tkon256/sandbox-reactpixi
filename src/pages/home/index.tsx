@@ -6,6 +6,7 @@ export const Home = () => {
       <div className="flex flex-wrap justify-around gap-4">
         <ButtonAnchor href="/samples/1">Sample 1</ButtonAnchor>
         <ButtonAnchor href="/samples/2">Sample 2</ButtonAnchor>
+        <ButtonAnchor href="/samples/3">Sample 3</ButtonAnchor>
       </div>
     </>
   )
