@@ -15,8 +15,7 @@ export const useCollision = () => {
 }
 
 const useCollider = <T extends Collider>(
-  manager: CollisionManager,
-  addCollider: (collisionManager: CollisionManager) => T,
+  addCollider: () => T,
   onCollisionEnter?: (collision: Collision) => void,
   onCollisionExit?: (collision: Collision) => void
 ) => {
@@ -25,7 +24,7 @@ const useCollider = <T extends Collider>(
   const unregisterCollisionExit = useRef<() => void>()
 
   useEffect(() => {
-    collider.current = addCollider(manager)
+    collider.current = addCollider()
 
     return () => {
       unregisterCollisionEnter.current?.()
@@ -82,8 +81,7 @@ export const useCircleCollider = (
   onCollisionExit?: (collision: Collision) => void
 ) => {
   return useCollider(
-    manager,
-    (collision) => collision.addCircleCollider(x, y, radius),
+    () => manager.addCircleCollider(x, y, radius),
     onCollisionEnter,
     onCollisionExit
   )
@@ -99,8 +97,7 @@ export const useRectCollider = (
   onCollisionExit?: (collision: Collision) => void
 ) => {
   return useCollider(
-    manager,
-    (collision) => collision.addRectCollider(x, y, width, height),
+    () => manager.addRectCollider(x, y, width, height),
     onCollisionEnter,
     onCollisionExit
   )
