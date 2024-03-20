@@ -1,10 +1,5 @@
-import { Stage } from '@pixi/react'
-import { Scene } from './scene'
+import { Game } from './game'
 
 export const Sample3 = () => {
-  return (
-    <Stage options={{ background: '#1099bb' }}>
-      <Scene />
-    </Stage>
-  )
+  return <Game />
 }

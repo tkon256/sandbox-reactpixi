@@ -1,21 +1,18 @@
 import { combination, except } from '@/utils/array'
 
 export class CollisionManager {
-  private colliders: Collider[]
-  private collisions: Collision[] = []
+  private colliders: Collider[] = []
+  private lastCollisions: Collision[] = []
   private collisionEnterCallbacks: ((collision: Collision) => void)[] = []
   private collisionExitCallbacks: ((collision: Collision) => void)[] = []
 
-  constructor(colliders?: Collider[]) {
-    this.colliders = colliders ?? []
-  }
-
   addCollider = <T extends Collider>(collider: T) => {
-    console.log('addCollider', collider)
-
     const index = this.colliders.indexOf(collider)
-    if (index !== -1) return this.colliders[index] as T
-    this.colliders!.push(collider)
+    if (index !== -1) {
+      return this.colliders[index] as T
+    }
+
+    this.colliders.push(collider)
     return collider
   }
 
@@ -28,11 +25,10 @@ export class CollisionManager {
   }
 
   removeCollider = (collider: Collider) => {
-    console.log('removeCollider', collider)
-
     const index = this.colliders.indexOf(collider)
-    if (index === -1) return
-    this.colliders.splice(index, 1)
+    if (index !== -1) {
+      this.colliders.splice(index, 1)
+    }
   }
 
   update = () => {
@@ -43,11 +39,11 @@ export class CollisionManager {
     }
     const enteredCollisions = except(
       collisions,
-      this.collisions,
+      this.lastCollisions,
       compareCollision
     )
     const exitedCollisions = except(
-      this.collisions,
+      this.lastCollisions,
       collisions,
       compareCollision
     )
@@ -55,7 +51,7 @@ export class CollisionManager {
     enteredCollisions.forEach(this.onCollisionEnter)
     exitedCollisions.forEach(this.onCollisionExit)
 
-    this.collisions = collisions
+    this.lastCollisions = collisions
   }
 
   private detectCollisions = () => {
@@ -87,6 +83,14 @@ export class CollisionManager {
     }
 
     return unregister
+  }
+
+  dispose = () => {
+    this.colliders.forEach((c) => c.dispose())
+    this.colliders = []
+    this.lastCollisions = []
+    this.collisionEnterCallbacks = []
+    this.collisionExitCallbacks = []
   }
 
   private isCollided = (c1: Collider, c2: Collider) => {
@@ -131,12 +135,10 @@ export class CollisionManager {
   }
 
   private onCollisionEnter = (collision: Collision) => {
-    console.log('onCollisionEnter', collision)
     this.collisionEnterCallbacks.forEach((c) => c(collision))
   }
 
   private onCollisionExit = (collision: Collision) => {
-    console.log('onCollisionExit', collision)
     this.collisionExitCallbacks.forEach((c) => c(collision))
   }
 }
@@ -168,6 +170,10 @@ export abstract class Collider {
       if (c.collider !== this) return
       callback(c)
     })
+  }
+
+  dispose = () => {
+    this.manager.removeCollider(this)
   }
 }
 

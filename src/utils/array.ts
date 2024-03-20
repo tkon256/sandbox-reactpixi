@@ -8,5 +8,7 @@ export const except = <T>(
 }
 
 export const combination = <T>(array: Array<T>) => {
-  return array.flatMap((x, i) => array.splice(0, i).map((y) => [x, y]))
+  return array.flatMap((x, i) =>
+    array.filter((_, j) => j <= i).map((y) => [x, y])
+  )
 }

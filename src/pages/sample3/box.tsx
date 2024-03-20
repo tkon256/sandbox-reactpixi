@@ -1,7 +1,8 @@
-import { RectCollider } from '@/components/game/collision'
-import { Collision } from '@/types/game/collision'
+import { RectCollider } from '@/components/collision'
+import { Collision, CollisionManager } from '@/types/collision'
 import { Graphics } from '@pixi/react'
 import * as PIXI from 'pixi.js'
+import { useCallback } from 'react'
 
 export interface BoxProps {
   x: number
@@ -9,6 +10,7 @@ export interface BoxProps {
   width: number
   height: number
   tint: string
+  collisionManager: CollisionManager
   onCollisionEnter?: (collision: Collision) => void
   onCollisionExit?: (collision: Collision) => void
 }
@@ -19,19 +21,24 @@ export const Box = ({
   width,
   height,
   tint,
+  collisionManager,
   onCollisionEnter,
   onCollisionExit,
 }: BoxProps) => {
-  function drawRect(graphics: PIXI.Graphics): void {
-    graphics.clear()
-    graphics.beginFill(tint)
-    graphics.drawRect(x, y, width, height)
-    graphics.endFill()
-  }
+  const draw = useCallback(
+    (graphics: PIXI.Graphics) => {
+      graphics.clear()
+      graphics.beginFill(tint)
+      graphics.drawRect(x, y, width, height)
+      graphics.endFill()
+    },
+    [x, y, width, height, tint]
+  )
 
   return (
     <>
       <RectCollider
+        manager={collisionManager}
         x={x}
         y={y}
         width={width}
@@ -39,7 +46,7 @@ export const Box = ({
         onCollisionEnter={onCollisionEnter}
         onCollisionExit={onCollisionExit}
       />
-      <Graphics draw={drawRect} tint={tint} />
+      <Graphics draw={draw} tint={tint} />
     </>
   )
 }

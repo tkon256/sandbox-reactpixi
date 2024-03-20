@@ -1,13 +1,15 @@
-import { CircleCollider } from '@/components/game/collision'
-import { Collision } from '@/types/game/collision'
+import { CircleCollider } from '@/components/collision'
+import { Collision, CollisionManager } from '@/types/collision'
 import { Graphics } from '@pixi/react'
-import * as PIXI from 'pixi.js'
+import { Graphics as PixiGraphics } from 'pixi.js'
+import { useCallback } from 'react'
 
 export interface CircleProps {
   x: number
   y: number
   radius: number
   tint: string
+  collisionManager: CollisionManager
   onCollisionEnter?: (collision: Collision) => void
   onCollisionExit?: (collision: Collision) => void
 }
@@ -17,26 +19,31 @@ export const Circle = ({
   y,
   radius,
   tint,
+  collisionManager,
   onCollisionEnter,
   onCollisionExit,
 }: CircleProps) => {
-  function drawRect(graphics: PIXI.Graphics): void {
-    graphics.clear()
-    graphics.beginFill(tint)
-    graphics.drawCircle(x, y, radius)
-    graphics.endFill()
-  }
+  const draw = useCallback(
+    (graphics: PixiGraphics) => {
+      graphics.clear()
+      graphics.beginFill(tint)
+      graphics.drawCircle(x, y, radius)
+      graphics.endFill()
+    },
+    [x, y, radius, tint]
+  )
 
   return (
     <>
       <CircleCollider
+        manager={collisionManager}
         x={x}
         y={y}
         radius={radius}
         onCollisionEnter={onCollisionEnter}
         onCollisionExit={onCollisionExit}
       />
-      <Graphics draw={drawRect} tint={tint} />
+      <Graphics draw={draw} tint={tint} />
     </>
   )
 }
