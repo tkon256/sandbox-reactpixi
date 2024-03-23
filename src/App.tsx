@@ -6,6 +6,7 @@ import { Sample1 } from './pages/sample1'
 import { Sample2 } from './pages/sample2'
 import { Sample3 } from './pages/sample3'
 import { Sample4 } from './pages/sample4'
+import { Sample5 } from './pages/sample5'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/samples/2" element={<Sample2 />} />
           <Route path="/samples/3" element={<Sample3 />} />
           <Route path="/samples/4" element={<Sample4 />} />
+          <Route path="/samples/5" element={<Sample5 />} />
         </Routes>
       </BrowserRouter>
     </>
